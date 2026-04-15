@@ -1,0 +1,580 @@
+/* --- Base --- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  background: #0f0f0f;
+  color: #f4f4f5;
+  cursor: pointer;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* --- Background layers (stage 5+) --- */
+.bg-gradient {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+  background: radial-gradient(ellipse 80% 60% at 20% 20%, rgba(99, 102, 241, 0.22), transparent 55%),
+    radial-gradient(ellipse 70% 50% at 80% 80%, rgba(236, 72, 153, 0.18), transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(14, 165, 233, 0.12), transparent 60%);
+  animation: gradientDrift 18s ease-in-out infinite alternate;
+}
+
+.bg-gradient.is-on {
+  opacity: 1;
+}
+
+@keyframes gradientDrift {
+  0% {
+    transform: scale(1) translate(0, 0);
+    filter: hue-rotate(0deg);
+  }
+  100% {
+    transform: scale(1.08) translate(-2%, 2%);
+    filter: hue-rotate(25deg);
+  }
+}
+
+.particles {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+
+.particles.is-on {
+  opacity: 1;
+}
+
+.particle-anchor {
+  position: absolute;
+  bottom: -12vh;
+  left: 0;
+  width: 2px;
+  height: 2px;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  left: -1.5px;
+  bottom: 0;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.32);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.35);
+  animation: floatParticle linear infinite;
+}
+
+@keyframes floatParticle {
+  0% {
+    transform: translateY(100vh) scale(0.6);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.9;
+  }
+  90% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateY(-10vh) scale(1);
+    opacity: 0;
+  }
+}
+
+/* --- Layout shell --- */
+.shell {
+  position: relative;
+  z-index: 1;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1.25rem, 4vw, 2.5rem);
+  gap: clamp(1rem, 3vw, 1.75rem);
+}
+
+.site-tagline {
+  position: fixed;
+  bottom: clamp(0.65rem, 2.5vw, 1.1rem);
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  z-index: 1;
+  width: max-content;
+  max-width: min(92vw, 24rem);
+  text-align: center;
+  font-size: clamp(0.92rem, 2.6vw, 1.05rem);
+  line-height: 1.4;
+  letter-spacing: 0.06em;
+  text-transform: lowercase;
+  font-weight: 500;
+  color: #ecfeff;
+  /* Fluorescent-style glow (cyan / magenta halos) */
+  text-shadow: 0 0 4px rgba(34, 211, 238, 0.95), 0 0 10px rgba(56, 189, 248, 0.85), 0 0 22px rgba(168, 85, 247, 0.55),
+    0 0 36px rgba(236, 72, 153, 0.35), 0 0 48px rgba(34, 211, 238, 0.2);
+  pointer-events: none;
+  user-select: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-tagline {
+    text-shadow: 0 0 8px rgba(34, 211, 238, 0.5), 0 0 16px rgba(168, 85, 247, 0.35);
+  }
+}
+
+/* --- Progress --- */
+.progress {
+  position: fixed;
+  top: clamp(0.75rem, 3vw, 1.25rem);
+  right: clamp(0.75rem, 3vw, 1.25rem);
+  margin: 0;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(244, 244, 245, 0.36);
+  padding: 0.45rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.028);
+  border: 1px solid rgba(255, 255, 255, 0.055);
+  box-shadow: 0 0 16px rgba(99, 102, 241, 0.08);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  user-select: none;
+  pointer-events: none;
+  opacity: 0.78;
+}
+
+/* --- Intro --- */
+.stage--intro {
+  text-align: center;
+  max-width: 22rem;
+}
+
+#introBlock[data-hint-level="1"],
+#introBlock[data-hint-level="2"],
+#introBlock[data-hint-level="3"],
+#introBlock[data-hint-level="4"],
+#introBlock[data-hint-level="5"],
+#introBlock[data-hint-level="6"] {
+  max-width: min(96vw, 36rem);
+}
+
+.intro-title {
+  margin: 0 0 0.75rem;
+  font-size: clamp(1.15rem, 4.2vw, 1.45rem);
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.02em;
+  transition: opacity 0.55s ease, transform 0.55s ease, max-height 0.65s ease, margin 0.65s ease;
+}
+
+.intro-sub {
+  margin: 0;
+  font-size: 0.95rem;
+  color: rgba(244, 244, 245, 0.55);
+  max-width: 20rem;
+  margin-inline: auto;
+  line-height: 1.45;
+  transition: color 0.5s ease, transform 0.5s ease, opacity 0.8s ease, filter 0.5s ease, max-height 0.6s ease, margin 0.6s ease,
+    white-space 0.35s ease;
+}
+
+/* Stages 1–6: one line, fixed size (no wrapping / no font scaling). */
+#introBlock[data-hint-level="1"] .intro-sub,
+#introBlock[data-hint-level="2"] .intro-sub,
+#introBlock[data-hint-level="3"] .intro-sub,
+#introBlock[data-hint-level="4"] .intro-sub,
+#introBlock[data-hint-level="5"] .intro-sub,
+#introBlock[data-hint-level="6"] .intro-sub {
+  font-size: 0.95rem;
+  white-space: nowrap;
+  max-width: min(96vw, 34rem);
+}
+
+/* Subtle lift without changing font size (stages 2–6). */
+#introBlock[data-hint-level="2"] .intro-sub {
+  color: rgba(244, 244, 245, 0.6);
+  transform: translateY(-0.12rem);
+}
+
+#introBlock[data-hint-level="3"] .intro-sub {
+  color: rgba(244, 244, 245, 0.64);
+  transform: translateY(-0.22rem);
+  filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.18));
+}
+
+#introBlock[data-hint-level="4"] .intro-sub {
+  color: rgba(244, 244, 245, 0.68);
+  transform: translateY(-0.32rem);
+  filter: drop-shadow(0 0 14px rgba(129, 140, 248, 0.22));
+}
+
+#introBlock[data-hint-level="5"] .intro-sub,
+#introBlock[data-hint-level="6"] .intro-sub {
+  color: rgba(244, 244, 245, 0.72);
+  transform: translateY(-0.42rem);
+  filter: drop-shadow(0 0 18px rgba(167, 139, 250, 0.26));
+}
+
+/* After stage 6: allow wrapping again if the line returns (e.g. future copy). */
+#introBlock[data-hint-level="7"] .intro-sub,
+#introBlock[data-hint-level="8"] .intro-sub {
+  white-space: normal;
+  max-width: 22rem;
+}
+
+/* Beat #introBlock[data-hint-level] so the line actually clears after stage 6 */
+#introBlock .intro-sub.intro-sub--retired {
+  opacity: 0 !important;
+  visibility: hidden;
+  transform: translateY(-0.35rem) scale(0.98) !important;
+  filter: none !important;
+  pointer-events: none;
+  max-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+}
+
+.intro-title.intro-title--gone {
+  opacity: 0;
+  transform: translateY(-0.65rem) scale(0.98);
+  max-height: 0;
+  margin: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transition: opacity 0.55s ease, transform 0.55s ease, max-height 0.65s ease 0.12s, margin 0.65s ease 0.12s;
+}
+
+/* --- Greeting (stage 1) --- */
+.greeting {
+  margin: 0;
+  font-size: clamp(1.35rem, 5vw, 1.85rem);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.greeting.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.12s;
+}
+
+/* --- Cards row --- */
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(0.75rem, 3vw, 1rem);
+  justify-content: center;
+  align-items: stretch;
+  max-width: 40rem;
+  width: 100%;
+}
+
+/* Glass card / button */
+.card {
+  --glow: rgba(99, 102, 241, 0.35);
+  appearance: none;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  padding: 1rem 1.35rem;
+  min-width: min(100%, 10.5rem);
+  min-height: 3.25rem;
+  border-radius: 1rem;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    0 0 28px var(--glow);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+  opacity: 0;
+  transform: translateY(10px) scale(0.96);
+  animation: cardEnter 0.55s ease forwards;
+}
+
+.card:focus-visible {
+  outline: 2px solid rgba(129, 140, 248, 0.85);
+  outline-offset: 3px;
+}
+
+.card:hover {
+  transform: translateY(-4px) scale(1.02);
+  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+    0 0 40px var(--glow);
+}
+
+.card:active {
+  transform: translateY(-1px) scale(0.99);
+}
+
+@keyframes cardEnter {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.cards .card:nth-child(1) {
+  animation-delay: 0.08s;
+}
+
+.cards .card:nth-child(2) {
+  animation-delay: 0.18s;
+}
+
+.cards .card:nth-child(3) {
+  animation-delay: 0.28s;
+}
+
+.card--github {
+  --glow: rgba(56, 189, 248, 0.35);
+}
+
+.card--linkedin {
+  --glow: rgba(59, 130, 246, 0.35);
+}
+
+.card--projects {
+  --glow: rgba(167, 139, 250, 0.4);
+}
+
+/* --- Projects modal --- */
+.modal[hidden] {
+  display: none !important;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: clamp(1rem, 4vw, 1.5rem);
+}
+
+.modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  cursor: pointer;
+}
+
+.modal__panel {
+  position: relative;
+  width: min(100%, 22rem);
+  max-height: min(88dvh, 28rem);
+  overflow: auto;
+  padding: clamp(1.1rem, 3.5vw, 1.45rem);
+  border-radius: 1.15rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(22, 22, 26, 0.94);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+    0 0 40px rgba(129, 140, 248, 0.12);
+  animation: modalIn 0.3s ease;
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modal__panel h2 {
+  margin: 0 0 0.35rem;
+  font-size: 1.2rem;
+}
+
+.modal__close {
+  position: absolute;
+  top: 0.55rem;
+  right: 0.55rem;
+  width: 2.1rem;
+  height: 2.1rem;
+  border: none;
+  border-radius: 0.55rem;
+  background: rgba(255, 255, 255, 0.08);
+  color: inherit;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.modal__close:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.modal__close:focus-visible {
+  outline: 2px solid rgba(167, 139, 250, 0.9);
+  outline-offset: 2px;
+}
+
+.modal__lead {
+  margin: 0 0 0.85rem;
+  font-size: 0.88rem;
+  color: rgba(244, 244, 245, 0.65);
+}
+
+.modal__project-list {
+  margin: 0 0 1rem;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.modal__project-list li {
+  margin: 0;
+}
+
+.modal__link {
+  display: block;
+  padding: 0.65rem 0.85rem;
+  border-radius: 0.65rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: #e0e7ff;
+  text-decoration: none;
+  font-size: 0.92rem;
+  font-weight: 500;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.modal__link:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(167, 139, 250, 0.35);
+  transform: translateY(-1px);
+}
+
+.modal__note {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: rgba(244, 244, 245, 0.72);
+}
+
+.modal__note code {
+  font-size: 0.78em;
+  padding: 0.1em 0.35em;
+  border-radius: 0.25rem;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.modal__email {
+  color: #ddd6fe;
+  font-weight: 600;
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.modal__email:hover {
+  text-decoration: underline;
+}
+
+/* --- Guitar picks: inline SVG from JS (smooth curves; avoids sharp clip-path “arrows”) --- */
+svg.guitar-pick {
+  position: fixed;
+  z-index: 2;
+  pointer-events: none;
+  width: var(--pick-size, 28px);
+  height: var(--pick-size, 28px);
+  left: var(--pick-x, 50%);
+  top: var(--pick-y, 50%);
+  opacity: 0.9;
+  transform: translate(-50%, -50%) rotate(var(--pick-rot, 0deg));
+  overflow: visible;
+  filter: drop-shadow(0 0 8px rgba(167, 139, 250, 0.55)) drop-shadow(0 0 20px rgba(99, 102, 241, 0.22));
+  animation: pickFloat 13s ease-in-out infinite;
+}
+
+svg.guitar-pick.guitar-pick--burst {
+  animation: pickBurst 2.8s ease-out forwards;
+}
+
+@keyframes pickFloat {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) rotate(var(--pick-rot, 0deg)) translate(0, 0);
+  }
+  40% {
+    transform: translate(-50%, -50%) rotate(calc(var(--pick-rot, 0deg) + 12deg)) translate(10px, -14px);
+  }
+  70% {
+    transform: translate(-50%, -50%) rotate(calc(var(--pick-rot, 0deg) - 8deg)) translate(-8px, 10px);
+  }
+}
+
+@keyframes pickBurst {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.2) rotate(var(--pick-rot, 0deg));
+  }
+  18% {
+    opacity: 0.95;
+    transform: translate(-50%, -50%) scale(1.05) rotate(var(--pick-rot, 0deg));
+  }
+  100% {
+    opacity: 0;
+    transform: translate(
+        calc(-50% + var(--pick-dx, 0px)),
+        calc(-50% + var(--pick-dy, 0px))
+      )
+      scale(0.85)
+      rotate(calc(var(--pick-rot, 0deg) + 40deg));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Keep ambient dots + picks animating; blanket * was crushing particle keyframes. */
+  *:not(.particle):not(svg.guitar-pick):not(.particles):not(.particle-anchor):not(.modal),
+  *:not(.particle):not(svg.guitar-pick):not(.particles):not(.particle-anchor):not(.modal)::before,
+  *:not(.particle):not(svg.guitar-pick):not(.particles):not(.particle-anchor):not(.modal)::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .bg-gradient {
+    animation: none;
+  }
+}
+
