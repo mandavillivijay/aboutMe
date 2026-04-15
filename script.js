@@ -12,7 +12,18 @@ const LINKS = {
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 
-/** Compact sparkle token (angular star — avoids teardrop / oval reads at a glance). */
+/** One line per stage 0–6 (bottom tagline); stage 7+ keeps the last line. */
+const STAGE_TAGLINES = [
+  "powered by tokens, driven by vibes",
+  "one layer in — keep tapping the dark",
+  "github’s live — ship in public",
+  "linkedin next — humans still matter",
+  "projects live in that button — demos await",
+  "ambient gradient on — enjoy the drift",
+  "you maxed the tour — thanks for the clicks",
+];
+
+/** Flat diamond token (reads clearly geometric, not a teardrop). */
 function createSparkTokenSvg() {
   const gradId = `token-grad-${Math.random().toString(36).slice(2, 10)}`;
   const svg = document.createElementNS(SVG_NS, "svg");
@@ -45,7 +56,7 @@ function createSparkTokenSvg() {
   const path = document.createElementNS(SVG_NS, "path");
   path.setAttribute(
     "d",
-    "M24 2.5 30.4 17.2 45.5 24 30.4 30.8 24 45.5 17.6 30.8 2.5 24 17.6 17.2 24 2.5z"
+    "M24 4 L44 24 24 44 4 24 Z"
   );
   path.setAttribute("fill", `url(#${gradId})`);
   path.setAttribute("stroke", "rgba(255,255,255,0.24)");
@@ -68,6 +79,7 @@ const state = {
 };
 
 const els = {
+  siteTagline: document.getElementById("siteTagline"),
   progress: document.getElementById("progress"),
   introBlock: document.getElementById("introBlock"),
   introTitle: document.getElementById("introTitle"),
@@ -97,6 +109,8 @@ function updateProgress() {
 function syncIntroChrome() {
   const level = Math.min(Math.max(state.stage, 0), 8);
   els.introBlock.dataset.hintLevel = String(level);
+  const tagIdx = Math.min(Math.max(state.stage, 0), STAGE_TAGLINES.length - 1);
+  els.siteTagline.textContent = STAGE_TAGLINES[tagIdx];
 }
 
 function playClickSound() {
