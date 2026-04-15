@@ -29,9 +29,9 @@ body {
   pointer-events: none;
   opacity: 0;
   transition: opacity 1.2s ease;
-  background: radial-gradient(ellipse 80% 60% at 20% 20%, rgba(99, 102, 241, 0.22), transparent 55%),
-    radial-gradient(ellipse 70% 50% at 80% 80%, rgba(236, 72, 153, 0.18), transparent 50%),
-    radial-gradient(circle at 50% 50%, rgba(14, 165, 233, 0.12), transparent 60%);
+  background: radial-gradient(circle min(58vw, 52vh) at 18% 18%, rgba(99, 102, 241, 0.22), transparent 58%),
+    radial-gradient(circle min(52vw, 46vh) at 82% 82%, rgba(236, 72, 153, 0.18), transparent 52%),
+    radial-gradient(circle min(72vw, 62vh) at 50% 50%, rgba(14, 165, 233, 0.12), transparent 60%);
   animation: gradientDrift 18s ease-in-out infinite alternate;
 }
 
@@ -75,29 +75,35 @@ body {
 
 .particle {
   position: absolute;
-  left: -1.5px;
+  left: -2px;
   bottom: 0;
-  width: 3px;
-  height: 3px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.32);
-  box-shadow: 0 0 8px rgba(255, 255, 255, 0.35);
+  width: 4px;
+  height: 4px;
+  border-radius: 1px;
+  --spark-rot: 45deg;
+  background: linear-gradient(
+    142deg,
+    rgba(255, 255, 255, 0.55) 0%,
+    rgba(186, 200, 255, 0.38) 42%,
+    rgba(167, 139, 250, 0.42) 100%
+  );
+  box-shadow: 0 0 7px rgba(196, 181, 253, 0.48), 0 0 14px rgba(99, 102, 241, 0.22);
   animation: floatParticle linear infinite;
 }
 
 @keyframes floatParticle {
   0% {
-    transform: translateY(100vh) scale(0.6);
+    transform: translateY(100vh) rotate(var(--spark-rot)) scale(0.55);
     opacity: 0;
   }
   10% {
-    opacity: 0.9;
+    opacity: 0.92;
   }
   90% {
-    opacity: 0.7;
+    opacity: 0.62;
   }
   100% {
-    transform: translateY(-10vh) scale(1);
+    transform: translateY(-10vh) rotate(var(--spark-rot)) scale(1);
     opacity: 0;
   }
 }
@@ -169,7 +175,7 @@ body {
 /* --- Intro --- */
 .stage--intro {
   text-align: center;
-  max-width: 22rem;
+  max-width: min(96vw, 28rem);
 }
 
 #introBlock[data-hint-level="1"],
@@ -194,14 +200,55 @@ body {
   margin: 0;
   font-size: 0.95rem;
   color: rgba(244, 244, 245, 0.55);
-  max-width: 20rem;
+  max-width: min(96vw, 26rem);
   margin-inline: auto;
   line-height: 1.45;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  text-align: center;
   transition: color 0.5s ease, transform 0.5s ease, opacity 0.8s ease, filter 0.5s ease, max-height 0.6s ease, margin 0.6s ease,
     white-space 0.35s ease;
 }
 
-/* Stages 1–6: one line, fixed size (no wrapping / no font scaling). */
+.intro-sub__lead {
+  display: block;
+}
+
+.intro-sub__cta {
+  display: block;
+  font-style: italic;
+  color: rgba(196, 181, 253, 0.92);
+  letter-spacing: 0.01em;
+}
+
+.intro-sub strong {
+  color: rgba(244, 244, 245, 0.82);
+  font-weight: 600;
+}
+
+/* First visit: gentle pulse so “click here” reads as intentional UI, not a stuck loader */
+#introBlock[data-hint-level="0"] .intro-sub {
+  animation: introHintPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes introHintPulse {
+  0%,
+  100% {
+    opacity: 0.58;
+  }
+  50% {
+    opacity: 0.92;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #introBlock[data-hint-level="0"] .intro-sub {
+    animation: none;
+  }
+}
+
+/* Stages 1–6: same font size; allow wrap for longer hint line. */
 #introBlock[data-hint-level="1"] .intro-sub,
 #introBlock[data-hint-level="2"] .intro-sub,
 #introBlock[data-hint-level="3"] .intro-sub,
@@ -209,8 +256,8 @@ body {
 #introBlock[data-hint-level="5"] .intro-sub,
 #introBlock[data-hint-level="6"] .intro-sub {
   font-size: 0.95rem;
-  white-space: nowrap;
-  max-width: min(96vw, 34rem);
+  white-space: normal;
+  max-width: min(96vw, 38rem);
 }
 
 /* Subtle lift without changing font size (stages 2–6). */
@@ -510,8 +557,8 @@ body {
   text-decoration: underline;
 }
 
-/* --- Guitar picks: inline SVG from JS (smooth curves; avoids sharp clip-path “arrows”) --- */
-svg.guitar-pick {
+/* --- Stage 6+ spark tokens: inline SVG (compact star, not teardrop / oval) --- */
+svg.spark-token {
   position: fixed;
   z-index: 2;
   pointer-events: none;
@@ -523,14 +570,14 @@ svg.guitar-pick {
   transform: translate(-50%, -50%) rotate(var(--pick-rot, 0deg));
   overflow: visible;
   filter: drop-shadow(0 0 8px rgba(167, 139, 250, 0.55)) drop-shadow(0 0 20px rgba(99, 102, 241, 0.22));
-  animation: pickFloat 13s ease-in-out infinite;
+  animation: sparkTokenFloat 13s ease-in-out infinite;
 }
 
-svg.guitar-pick.guitar-pick--burst {
-  animation: pickBurst 2.8s ease-out forwards;
+svg.spark-token.spark-token--burst {
+  animation: sparkTokenBurst 2.8s ease-out forwards;
 }
 
-@keyframes pickFloat {
+@keyframes sparkTokenFloat {
   0%,
   100% {
     transform: translate(-50%, -50%) rotate(var(--pick-rot, 0deg)) translate(0, 0);
@@ -543,7 +590,7 @@ svg.guitar-pick.guitar-pick--burst {
   }
 }
 
-@keyframes pickBurst {
+@keyframes sparkTokenBurst {
   0% {
     opacity: 0;
     transform: translate(-50%, -50%) scale(0.2) rotate(var(--pick-rot, 0deg));
@@ -564,10 +611,10 @@ svg.guitar-pick.guitar-pick--burst {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  /* Keep ambient dots + picks animating; blanket * was crushing particle keyframes. */
-  *:not(.particle):not(svg.guitar-pick):not(.particles):not(.particle-anchor):not(.modal),
-  *:not(.particle):not(svg.guitar-pick):not(.particles):not(.particle-anchor):not(.modal)::before,
-  *:not(.particle):not(svg.guitar-pick):not(.particles):not(.particle-anchor):not(.modal)::after {
+  /* Keep ambient motes + spark tokens animating; blanket * was crushing particle keyframes. */
+  *:not(.particle):not(svg.spark-token):not(.particles):not(.particle-anchor):not(.modal),
+  *:not(.particle):not(svg.spark-token):not(.particles):not(.particle-anchor):not(.modal)::before,
+  *:not(.particle):not(svg.spark-token):not(.particles):not(.particle-anchor):not(.modal)::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;

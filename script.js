@@ -12,12 +12,12 @@ const LINKS = {
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 
-/** Rounded “pick” built as real SVG geometry (reads soft at any scale). */
-function createGuitarPickSvg() {
-  const gradId = `pick-grad-${Math.random().toString(36).slice(2, 10)}`;
+/** Compact sparkle token (angular star — avoids teardrop / oval reads at a glance). */
+function createSparkTokenSvg() {
+  const gradId = `token-grad-${Math.random().toString(36).slice(2, 10)}`;
   const svg = document.createElementNS(SVG_NS, "svg");
-  svg.setAttribute("viewBox", "0 0 48 56");
-  svg.setAttribute("class", "guitar-pick");
+  svg.setAttribute("viewBox", "0 0 48 48");
+  svg.setAttribute("class", "spark-token");
   svg.setAttribute("aria-hidden", "true");
 
   const defs = document.createElementNS(SVG_NS, "defs");
@@ -45,11 +45,11 @@ function createGuitarPickSvg() {
   const path = document.createElementNS(SVG_NS, "path");
   path.setAttribute(
     "d",
-    "M24 2.8c.92 0 1.78.28 2.5.75 6.2 4 10.75 12.9 10.75 23.15 0 7.35-3.05 13.95-7.9 18.05-.83.67-1.72 1.18-2.66 1.52-.9.32-1.86.48-2.81.48-.96 0-1.91-.16-2.81-.48-.94-.34-1.83-.85-2.66-1.52-4.85-4.1-7.9-10.7-7.9-18.05 0-10.25 4.55-19.15 10.75-23.15.72-.47 1.58-.75 2.5-.75z"
+    "M24 2.5 30.4 17.2 45.5 24 30.4 30.8 24 45.5 17.6 30.8 2.5 24 17.6 17.2 24 2.5z"
   );
   path.setAttribute("fill", `url(#${gradId})`);
-  path.setAttribute("stroke", "rgba(255,255,255,0.22)");
-  path.setAttribute("stroke-width", "0.55");
+  path.setAttribute("stroke", "rgba(255,255,255,0.24)");
+  path.setAttribute("stroke-width", "0.65");
   path.setAttribute("stroke-linejoin", "round");
 
   svg.appendChild(defs);
@@ -133,7 +133,7 @@ function markExternalLink(id) {
 function beginHintWindDown() {
   if (state.hintWindDownStarted) return;
   state.hintWindDownStarted = true;
-  spawnCelebrationPicks();
+  spawnCelebrationTokens();
 }
 
 function retireBuildHintLine() {
@@ -152,31 +152,31 @@ function closeProjectsModal() {
   els.projectsModal.hidden = true;
 }
 
-function spawnCelebrationPicks() {
+function spawnCelebrationTokens() {
   const originX = 50;
   const originY = 44;
   const count = 7;
   for (let i = 0; i < count; i++) {
-    const pick = createGuitarPickSvg();
-    pick.classList.add("guitar-pick--burst");
+    const token = createSparkTokenSvg();
+    token.classList.add("spark-token--burst");
     const angle = (Math.PI * 2 * i) / count + Math.random() * 0.35;
     const dist = 80 + Math.random() * 110;
     const dx = Math.cos(angle) * dist;
     const dy = Math.sin(angle) * dist;
     const size = 22 + Math.random() * 26;
     const rot = Math.random() * 220 - 110;
-    pick.style.setProperty("--pick-x", `${originX + (Math.random() * 6 - 3)}vw`);
-    pick.style.setProperty("--pick-y", `${originY + (Math.random() * 6 - 3)}vh`);
-    pick.style.setProperty("--pick-size", `${size}px`);
-    pick.style.setProperty("--pick-rot", `${rot}deg`);
-    pick.style.setProperty("--pick-dx", `${dx}px`);
-    pick.style.setProperty("--pick-dy", `${dy}px`);
-    document.body.appendChild(pick);
-    window.setTimeout(() => pick.remove(), 3200);
+    token.style.setProperty("--pick-x", `${originX + (Math.random() * 6 - 3)}vw`);
+    token.style.setProperty("--pick-y", `${originY + (Math.random() * 6 - 3)}vh`);
+    token.style.setProperty("--pick-size", `${size}px`);
+    token.style.setProperty("--pick-rot", `${rot}deg`);
+    token.style.setProperty("--pick-dx", `${dx}px`);
+    token.style.setProperty("--pick-dy", `${dy}px`);
+    document.body.appendChild(token);
+    window.setTimeout(() => token.remove(), 3200);
   }
 }
 
-function setPickVars(el) {
+function setSparkTokenVars(el) {
   const size = 20 + Math.random() * 34;
   const rot = Math.random() * 360;
   el.style.setProperty("--pick-x", `${Math.random() * 86 + 7}vw`);
@@ -188,7 +188,9 @@ function setPickVars(el) {
 function stage1_greeting() {
   els.introTitle.classList.add("intro-title--gone");
   els.introTitle.setAttribute("aria-hidden", "true");
-  els.introSub.textContent = "Keep clicking empty space to reveal more.";
+  els.introSub.innerHTML =
+    '<span class="intro-sub__lead">Keep clicking the dark background to reveal more.</span>' +
+    '<span class="intro-sub__cta">Each click adds something new.</span>';
   els.greeting.hidden = false;
   requestAnimationFrame(() => els.greeting.classList.add("is-visible"));
 }
@@ -248,6 +250,7 @@ function seedParticles() {
     anchor.style.left = `${Math.random() * 100}%`;
     const dot = document.createElement("span");
     dot.className = "particle";
+    dot.style.setProperty("--spark-rot", `${(Math.random() * 70 - 35).toFixed(1)}deg`);
     dot.style.animationDuration = `${12 + Math.random() * 18}s`;
     dot.style.animationDelay = `${-Math.random() * 20}s`;
     anchor.appendChild(dot);
@@ -263,10 +266,10 @@ function stage5_background() {
 }
 
 function stage6plus_fx() {
-  const pick = createGuitarPickSvg();
-  setPickVars(pick);
-  document.body.appendChild(pick);
-  window.setTimeout(() => pick.remove(), 26000);
+  const token = createSparkTokenSvg();
+  setSparkTokenVars(token);
+  document.body.appendChild(token);
+  window.setTimeout(() => token.remove(), 26000);
 }
 
 const stageRunners = [
